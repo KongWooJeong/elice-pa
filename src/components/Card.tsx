@@ -7,17 +7,19 @@ import {
   faCalendarMinus,
 } from "@fortawesome/free-solid-svg-icons";
 
-function Card() {
+interface Props {
+  label: string;
+  title: string;
+  description: string;
+  logo: string;
+}
+
+function Card({ label, title, description, logo }: Props) {
   return (
     <CardContainer>
-      <div className="label">유료</div>
-      <div className="title">
-        취준생을 위한 현직자 IT 직무 특강 취준생을 위한 현직자 IT 직무
-        특강취준생을 위한 현직자 IT 직무 특강취준생을 위한 현직자 IT 직무
-        특강취준생을 위한 현직자 IT 직무 특강취준생을 위한 현직자 IT 직무
-        특강취준생을 위한 현직자 IT 직무 특강취준생을 위한 현직자 IT 직무 특강
-      </div>
-      <div className="description">asdfsffasfdsaf</div>
+      <div className="label">{label}</div>
+      <div className="title">{title}</div>
+      <div className="description">{description}</div>
       <div className="info">
         <div className="content">
           <div className="icon-text-container">
@@ -40,7 +42,7 @@ function Card() {
           </div>
         </div>
         <div className="logo-container">
-          <img src="" alt="classLogo" />
+          <img src={logo} alt="classLogo" />
         </div>
       </div>
     </CardContainer>
