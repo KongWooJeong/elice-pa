@@ -7,6 +7,7 @@ import Filter from "../components/Filter";
 import Spacing from "../components/Spacing";
 import CardList from "../components/CardList";
 import Card from "../components/Card";
+import Pagenation from "../components/Pagenation";
 
 interface Course {
   id: number;
@@ -27,22 +28,37 @@ function Home() {
     course_count: 0,
     courses: [],
   });
+  const [page, setPage] = useState(1);
+  const [lastPage, setLastPage] = useState(0);
+  const [pageList, setPageList] = useState<number[]>([]);
 
   useEffect(() => {
     async function getClassList() {
       try {
         const { data } = await axios.get(
-          "https://api-rest.elice.io/org/academy/course/list/?offset=0&count=20"
+          `https://api-rest.elice.io/org/academy/course/list/?offset=${
+            (page - 1) * 20
+          }&count=20`
         );
 
+        const startPage = Math.max(page - 4, 1);
+        const endPage = Math.min(page + 4, Math.ceil(data.course_count / 20));
+        const pageArr = [];
+
+        for (let i = startPage; i <= endPage; i++) {
+          pageArr.push(i);
+        }
+
+        setPageList(pageArr);
         setClassInfo(data);
+        setLastPage(Math.ceil(data.course_count / 20));
       } catch (error) {
         console.log(error);
       }
     }
 
     getClassList();
-  }, []);
+  }, [page]);
 
   return (
     <HomeContainer>
@@ -72,6 +88,12 @@ function Home() {
           );
         })}
       </CardList>
+      <Pagenation
+        pageList={pageList}
+        lastPage={lastPage}
+        currentPage={page}
+        setPage={setPage}
+      />
     </HomeContainer>
   );
 }
