@@ -16,6 +16,7 @@ function Filter() {
 const FilterContainer = styled.div`
   display: flex;
   border: 1px solid rgb(225, 226, 228);
+  background-color: white;
 
   .filter-options {
     display: flex;
