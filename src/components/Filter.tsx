@@ -1,9 +1,9 @@
-import React from "react";
-import { useRecoilState } from "recoil";
+import React, { useEffect } from "react";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { cloneDeep } from "lodash";
 import styled from "styled-components";
 
-import { conditionInfo } from "../store/course";
+import { conditionInfo, pageInfo } from "../store/course";
 
 interface Option {
   type: string;
@@ -18,6 +18,16 @@ interface Props {
 
 function Filter({ title, optionList }: Props) {
   const [condition, setCondition] = useRecoilState(conditionInfo);
+  const setPageInfo = useSetRecoilState(pageInfo);
+
+  useEffect(() => {
+    setPageInfo({
+      currentPage: 1,
+      lastPage: 0,
+      offset: 0,
+      count: 20,
+    });
+  }, [condition]);
 
   return (
     <FilterContainer>
