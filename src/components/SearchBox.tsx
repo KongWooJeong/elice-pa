@@ -2,9 +2,9 @@ import React, { useEffect, ChangeEvent } from "react";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
-import { useDebounce } from "../hooks/useDebounce";
-
 import { useRecoilState, useSetRecoilState } from "recoil";
+
+import { useDebounce } from "../hooks/useDebounce";
 import { searchKeyword, pageInfo } from "../store/course";
 
 function SearchBox() {
