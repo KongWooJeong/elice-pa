@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import styled from "styled-components";
+import { useRecoilValue, useRecoilState } from "recoil";
+
+import { courseListSelector } from "../store/course";
+import { pageInfo } from "../store/course";
 
 import SearchBox from "../components/SearchBox";
 import Filter from "../components/Filter";
@@ -9,66 +12,44 @@ import CardList from "../components/CardList";
 import Card from "../components/Card";
 import Pagenation from "../components/Pagenation";
 
-interface Course {
-  id: number;
-  enroll_type: number;
-  is_free: boolean;
-  title: string;
-  short_description: string;
-  logo_file_url: string;
-}
-
-interface ClassInfo {
-  course_count: number;
-  courses: Course[];
-}
-
 function Home() {
-  const [classInfo, setClassInfo] = useState<ClassInfo>({
-    course_count: 0,
-    courses: [],
-  });
-  const [page, setPage] = useState(1);
-  const [lastPage, setLastPage] = useState(0);
-  const [pageList, setPageList] = useState<number[]>([]);
+  const [page, setPage] = useState<number>(1);
+  const courseInfo = useRecoilValue(courseListSelector);
+  const [pageData, setPageData] = useRecoilState(pageInfo);
 
   useEffect(() => {
-    async function getClassList() {
-      try {
-        const { data } = await axios.get(
-          `https://api-rest.elice.io/org/academy/course/list/?offset=${
-            (page - 1) * 20
-          }&count=20`
-        );
+    const startPage = Math.max(page - 4, 1);
+    const endPage = Math.min(page + 4, Math.ceil(courseInfo.course_count / 20));
+    const pageArr = [];
 
-        const startPage = Math.max(page - 4, 1);
-        const endPage = Math.min(page + 4, Math.ceil(data.course_count / 20));
-        const pageArr = [];
-
-        for (let i = startPage; i <= endPage; i++) {
-          pageArr.push(i);
-        }
-
-        setPageList(pageArr);
-        setClassInfo(data);
-        setLastPage(Math.ceil(data.course_count / 20));
-      } catch (error) {
-        console.log(error);
-      }
+    for (let i = startPage; i <= endPage; i++) {
+      pageArr.push(i);
     }
 
-    getClassList();
+    setPageData({
+      currentPage: page,
+      lastPage: Math.ceil(courseInfo.course_count / 20),
+      offset: (page - 1) * 20,
+      count: 20,
+      pageList: pageArr,
+    });
   }, [page]);
 
   return (
     <HomeContainer>
       <SearchBox />
       <Spacing height="12" />
-      <Filter />
+      <Filter
+        title="가격"
+        optionList={[
+          { type: "price", value: "무료", status: "free" },
+          { type: "price", value: "유료", status: "paid" },
+        ]}
+      />
       <Spacing height="12" />
-      <div className="total-count">{`전체 ${classInfo["course_count"]}개`}</div>
+      <div className="total-count">{`전체 ${courseInfo["course_count"]}개`}</div>
       <CardList>
-        {classInfo.courses.map((course) => {
+        {courseInfo.courses.map((course) => {
           let label = "";
 
           if (course.enroll_type === 0) {
@@ -89,8 +70,8 @@ function Home() {
         })}
       </CardList>
       <Pagenation
-        pageList={pageList}
-        lastPage={lastPage}
+        pageList={pageData.pageList}
+        lastPage={pageData.lastPage}
         currentPage={page}
         setPage={setPage}
       />
