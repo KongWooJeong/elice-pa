@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, ChangeEvent } from "react";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
@@ -8,10 +8,10 @@ import { useRecoilState } from "recoil";
 import { searchKeyword } from "../store/course";
 
 function SearchBox() {
-  const [debouncedState, setDebouncedState] = useDebounce("");
+  const [debouncedState, setDebouncedState] = useDebounce("", 3000);
   const [keyword, setKeyword] = useRecoilState(searchKeyword);
 
-  const handleChange = (event: any) => {
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setDebouncedState(event.target.value);
   };
 
