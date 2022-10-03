@@ -4,12 +4,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { useDebounce } from "../hooks/useDebounce";
 
-import { useRecoilState } from "recoil";
-import { searchKeyword } from "../store/course";
+import { useRecoilState, useSetRecoilState } from "recoil";
+import { searchKeyword, pageInfo } from "../store/course";
 
 function SearchBox() {
   const [debouncedState, setDebouncedState] = useDebounce("", 3000);
   const [keyword, setKeyword] = useRecoilState(searchKeyword);
+  const setPageInfo = useSetRecoilState(pageInfo);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setDebouncedState(event.target.value);
@@ -22,6 +23,15 @@ function SearchBox() {
 
     setKeyword({ keyword: debouncedState });
   }, [debouncedState]);
+
+  useEffect(() => {
+    setPageInfo({
+      currentPage: 1,
+      lastPage: 0,
+      offset: 0,
+      count: 20,
+    });
+  }, [keyword]);
 
   return (
     <SearchWrapper>
