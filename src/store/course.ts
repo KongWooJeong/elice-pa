@@ -20,7 +20,6 @@ interface PageInfo {
   lastPage: number;
   offset: number;
   count: number;
-  pageList: number[];
 }
 
 interface PriceCondition {
@@ -68,7 +67,7 @@ export const pageInfo = atom<PageInfo>({
     lastPage: 0,
     offset: 0,
     count: 20,
-    pageList: [],
+    // pageList: [],
   },
 });
 
@@ -79,10 +78,16 @@ export const searchKeyword = atom<SearchKeyword>({
   },
 });
 
-export const courseListSelector = selector<CourseInfo>({
+interface Result {
+  data: CourseInfo;
+  pageList: number[];
+  lastPage: number;
+}
+
+export const courseListSelector = selector<Result>({
   key: "courseListSelector",
   get: async ({ get }) => {
-    const { offset } = get(pageInfo);
+    const { offset, currentPage } = get(pageInfo);
     const { price } = get(conditionInfo);
     const { keyword } = get(searchKeyword);
 
@@ -118,6 +123,21 @@ export const courseListSelector = selector<CourseInfo>({
       `https://api-rest.elice.io/org/academy/course/list/?filter_conditions=${filterCondtion}&offset=${offset}&count=20`
     );
 
-    return data;
+    const startPage = Math.max(currentPage - 4, 1);
+    const endPage = Math.min(
+      currentPage + 4,
+      Math.ceil(data.course_count / 20)
+    );
+    const pageArr = [];
+
+    for (let i = startPage; i <= endPage; i++) {
+      pageArr.push(i);
+    }
+
+    return {
+      data,
+      pageList: pageArr,
+      lastPage: Math.ceil(data.course_count / 20),
+    };
   },
 });
