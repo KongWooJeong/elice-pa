@@ -1,13 +1,44 @@
 import React from "react";
+import { useRecoilState } from "recoil";
+import { cloneDeep } from "lodash";
 import styled from "styled-components";
 
-function Filter() {
+import { conditionInfo } from "../store/course";
+
+interface Option {
+  type: string;
+  value: string;
+  status: string;
+}
+
+interface Props {
+  title: string;
+  optionList: Option[];
+}
+
+function Filter({ title, optionList }: Props) {
+  const [condition, setCondition] = useRecoilState(conditionInfo);
+
   return (
     <FilterContainer>
-      <div className="filter-options">가격</div>
+      <div className="filter-options">{title}</div>
       <div className="filter-contents">
-        <Chip>무료</Chip>
-        <Chip>유료</Chip>
+        {optionList.map((option, index) => (
+          <Chip
+            key={index}
+            className={condition[option.type][option.status] ? "active" : ""}
+            onClick={() => {
+              const newCondtion = cloneDeep(condition);
+              const { type, status } = option;
+
+              newCondtion[type][status] = !newCondtion[type][status];
+
+              setCondition(newCondtion);
+            }}
+          >
+            {option.value}
+          </Chip>
+        ))}
       </div>
     </FilterContainer>
   );
@@ -17,6 +48,11 @@ const FilterContainer = styled.div`
   display: flex;
   border: 1px solid rgb(225, 226, 228);
   background-color: white;
+
+  .active {
+    background-color: rgb(82, 79, 161);
+    color: white;
+  }
 
   .filter-options {
     display: flex;
