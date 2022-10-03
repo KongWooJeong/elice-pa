@@ -67,7 +67,6 @@ export const pageInfo = atom<PageInfo>({
     lastPage: 0,
     offset: 0,
     count: 20,
-    // pageList: [],
   },
 });
 
