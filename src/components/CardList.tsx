@@ -1,9 +1,10 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import styled from "styled-components";
 
 interface Props {
-  children: React.ReactNode;
+  children: ReactNode;
 }
+
 function CardList({ children }: Props) {
   return <ListContainer>{children}</ListContainer>;
 }
