@@ -1,9 +1,28 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import { useDebounce } from "../hooks/useDebounce";
+
+import { useRecoilState } from "recoil";
+import { searchKeyword } from "../store/course";
 
 function SearchBox() {
+  const [debouncedState, setDebouncedState] = useDebounce("");
+  const [keyword, setKeyword] = useRecoilState(searchKeyword);
+
+  const handleChange = (event: any) => {
+    setDebouncedState(event.target.value);
+  };
+
+  useEffect(() => {
+    if (debouncedState === "") {
+      return;
+    }
+
+    setKeyword({ keyword: debouncedState });
+  }, [debouncedState]);
+
   return (
     <SearchWrapper>
       <div className="icon-container">
@@ -13,6 +32,7 @@ function SearchBox() {
         <input
           type="text"
           placeholder="배우고 싶은 언어, 기술을 검색해 보세요"
+          onChange={handleChange}
         />
       </div>
     </SearchWrapper>
