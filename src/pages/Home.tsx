@@ -18,20 +18,11 @@ function Home() {
   const [pageData, setPageData] = useRecoilState(pageInfo);
 
   useEffect(() => {
-    const startPage = Math.max(page - 4, 1);
-    const endPage = Math.min(page + 4, Math.ceil(courseInfo.course_count / 20));
-    const pageArr = [];
-
-    for (let i = startPage; i <= endPage; i++) {
-      pageArr.push(i);
-    }
-
     setPageData({
       currentPage: page,
-      lastPage: Math.ceil(courseInfo.course_count / 20),
+      lastPage: Math.ceil(courseInfo.data.course_count / 20),
       offset: (page - 1) * 20,
       count: 20,
-      pageList: pageArr,
     });
   }, [page]);
 
@@ -47,9 +38,9 @@ function Home() {
         ]}
       />
       <Spacing height="12" />
-      <div className="total-count">{`전체 ${courseInfo["course_count"]}개`}</div>
+      <div className="total-count">{`전체 ${courseInfo.data["course_count"]}개`}</div>
       <CardList>
-        {courseInfo.courses.map((course) => {
+        {courseInfo.data.courses.map((course) => {
           let label = "";
 
           if (course.enroll_type === 0) {
@@ -70,9 +61,9 @@ function Home() {
         })}
       </CardList>
       <Pagenation
-        pageList={pageData.pageList}
-        lastPage={pageData.lastPage}
-        currentPage={page}
+        pageList={courseInfo.pageList}
+        lastPage={courseInfo.lastPage}
+        currentPage={pageData.currentPage}
         setPage={setPage}
       />
     </HomeContainer>
